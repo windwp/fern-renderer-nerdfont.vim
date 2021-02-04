@@ -75,9 +75,18 @@ endfunction
 
 " Check if nerdfont has installed or not
 try
-  call nerdfont#find('')
   function! s:find(bufname, isdir) abort
-    return nerdfont#find(a:bufname, a:isdir) . g:fern#renderer#nerdfont#padding
+    let l:ext = fnamemodify(a:bufname, ":e")
+    let l:filename = fnamemodify(a:bufname, ":t")
+    if l:filename[len(l:filename)-1]=='$'
+      if a:isdir == 'open'
+        let l:ext="folderopen"
+      elseif a:isdir == 'close'
+        let l:ext="folderclose"
+      endif
+    endif
+    let l:icon =luaeval("require('nvim-web-devicons').get_icon('".l:filename."', '" . l:ext."')")
+    return l:icon . g:fern#renderer#nerdfont#padding
   endfunction
 catch /^Vim\%((\a\+)\)\=:E117:/
   function! s:find(bufname, isdir) abort
